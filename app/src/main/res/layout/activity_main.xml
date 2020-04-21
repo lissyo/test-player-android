@@ -10,7 +10,7 @@
         android:background="@android:drawable/edit_text"
         android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/button_play"
+        android:id="@+id/start_player_activity"
         android:text="@string/play_label"
         style="@style/ButtonStyle"
         android:layout_width="match_parent"
