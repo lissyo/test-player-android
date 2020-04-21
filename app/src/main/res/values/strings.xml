@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">test-player-android</string>
+    <string name="play_label">PLAY</string>
 </resources>

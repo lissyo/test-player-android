@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/edit_text_player_url"
+        android:layout_width="match_parent"
+        android:background="@android:drawable/edit_text"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/button_play"
+        android:text="@string/play_label"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
