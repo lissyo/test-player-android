@@ -2,6 +2,7 @@ package tv.limehd.test_player_android;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,20 +34,25 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.Objects;
 
 import static tv.limehd.test_player_android.MainActivity.PLAYER_URL;
+import static tv.limehd.test_player_android.MainActivity.REDIRECT_IS_SUPPORT;
 
 public class PlayerActivity extends Activity {
 
     private String playerUrl;
+    private boolean hasSupportRedirect;
 
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private DefaultDataSourceFactory mediaDataSourceFactory;
+    private DefaultHttpDataSourceFactory httpDataSourceFactory;
     private DefaultBandwidthMeter bandwidthMeter;
     private TrackGroupArray lastSeenTrackGroupArray;
     private PlayerView mPlayerView;
@@ -58,7 +64,9 @@ public class PlayerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         progressLoading = findViewById(R.id.progress_bar);
-        playerUrl = Objects.requireNonNull(getIntent().getExtras()).getString(PLAYER_URL);
+        Intent intent = getIntent();
+        playerUrl = Objects.requireNonNull(intent.getExtras()).getString(PLAYER_URL);
+        hasSupportRedirect = intent.getExtras().getBoolean(REDIRECT_IS_SUPPORT);
         mPlayerView = findViewById(R.id.player_view);
         setUpVideo();
     }
@@ -67,9 +75,11 @@ public class PlayerActivity extends Activity {
         bandwidthMeter = new DefaultBandwidthMeter();
         mediaDataSourceFactory = new DefaultDataSourceFactory(this,
                 Util.getUserAgent(this, getApplication().getPackageName()), bandwidthMeter);
+        httpDataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(this, getApplication().getPackageName()), DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true);
     }
 
-    private void initializePlayer(){
+    private void initializePlayer() {
         progressLoading.setVisibility(View.INVISIBLE);
         lastSeenTrackGroupArray = null;
         mPlayerView.requestFocus();
@@ -85,10 +95,18 @@ public class PlayerActivity extends Activity {
         player.setPlayWhenReady(true);
         player.addAnalyticsListener(new EventLogger(trackSelector));
         //TODO nullpointer
-        MediaSource videoSource = new HlsMediaSource.Factory(mediaDataSourceFactory)
-                .setPlaylistParserFactory(
-                        new DefaultHlsPlaylistParserFactory())
-                .createMediaSource(Uri.parse(playerUrl));
+        MediaSource videoSource;
+        if (hasSupportRedirect) {
+            videoSource = new HlsMediaSource.Factory(httpDataSourceFactory)
+                    .setPlaylistParserFactory(
+                            new DefaultHlsPlaylistParserFactory())
+                    .createMediaSource(Uri.parse(playerUrl));
+        } else {
+            videoSource = new HlsMediaSource.Factory(mediaDataSourceFactory)
+                    .setPlaylistParserFactory(
+                            new DefaultHlsPlaylistParserFactory())
+                    .createMediaSource(Uri.parse(playerUrl));
+        }
         player.addListener(new Player.EventListener() {
             @Override
             public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
@@ -187,7 +205,7 @@ public class PlayerActivity extends Activity {
         }
     }
 
-    private void openDialogError(String message){
+    private void openDialogError(String message) {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_error);

@@ -27,6 +27,15 @@
             android:layout_height="wrap_content"
             android:text="@string/play_label" />
 
+        <CheckBox
+            android:id="@+id/check_box_support_label"
+            android:padding="@dimen/check_box_padding"
+            android:checked="true"
+            android:layout_gravity="center"
+            android:text="@string/redirect_support_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 </RelativeLayout>

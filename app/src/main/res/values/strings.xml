@@ -3,4 +3,5 @@
     <string name="play_label">PLAY</string>
     <string name="edit_text_hint_link">Enter the HLS url *.m3u8</string>
     <string name="button_ok">OK</string>
+    <string name="redirect_support_label">Поддержка редиректа плеером</string>
 </resources>
