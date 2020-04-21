@@ -1,8 +1,15 @@
 package tv.limehd.test_player_android;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 
@@ -24,7 +31,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.TrackNameProvider;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.EventLogger;
@@ -43,14 +49,15 @@ public class PlayerActivity extends Activity {
     private DefaultDataSourceFactory mediaDataSourceFactory;
     private DefaultBandwidthMeter bandwidthMeter;
     private TrackGroupArray lastSeenTrackGroupArray;
-    private TrackNameProvider trackNameProvider;
     private PlayerView mPlayerView;
     private SimpleExoPlayer player;
+    private ProgressBar progressLoading;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+        progressLoading = findViewById(R.id.progress_bar);
         playerUrl = Objects.requireNonNull(getIntent().getExtras()).getString(PLAYER_URL);
         mPlayerView = findViewById(R.id.player_view);
         setUpVideo();
@@ -63,6 +70,7 @@ public class PlayerActivity extends Activity {
     }
 
     private void initializePlayer(){
+        progressLoading.setVisibility(View.INVISIBLE);
         lastSeenTrackGroupArray = null;
         mPlayerView.requestFocus();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -116,6 +124,11 @@ public class PlayerActivity extends Activity {
                     releasePlayer();
                     initializePlayer();
                 }
+                if (playbackState == 2) {
+                    progressLoading.setVisibility(View.VISIBLE);
+                } else {
+                    progressLoading.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -130,7 +143,19 @@ public class PlayerActivity extends Activity {
 
             @Override
             public void onPlayerError(ExoPlaybackException error) {
-                initializePlayer();
+                switch (error.type) {
+                    case ExoPlaybackException.TYPE_SOURCE:
+                        openDialogError(error.getSourceException().getMessage());
+                        break;
+
+                    case ExoPlaybackException.TYPE_RENDERER:
+                        openDialogError(error.getRendererException().getMessage());
+                        break;
+
+                    case ExoPlaybackException.TYPE_UNEXPECTED:
+                        openDialogError(error.getUnexpectedException().getMessage());
+                        break;
+                }
             }
 
             @Override
@@ -160,6 +185,22 @@ public class PlayerActivity extends Activity {
             player = null;
             trackSelector = null;
         }
+    }
+
+    private void openDialogError(String message){
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_error);
+        EditText editTextDialogInfo = dialog.findViewById(R.id.edit_text_dialog_info);
+        editTextDialogInfo.setText(message);
+        Button buttonDialogOk = dialog.findViewById(R.id.button_dialog_ok);
+        buttonDialogOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     @Override
