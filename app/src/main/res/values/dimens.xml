@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="buttonTextSize">14sp</dimen>
+    <dimen name="marginButtonPlay">10dp</dimen>
 </resources>

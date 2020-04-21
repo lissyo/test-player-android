@@ -7,4 +7,5 @@
     <color name="colorButton">#FFFFFF</color>
     <color name="colorButtonSolid">#2B4527</color>
     <color name="colorButtonStroke">#FFFFFF</color>
+    <color name="colorPlayerActivityBackground">#000000</color>
 </resources>

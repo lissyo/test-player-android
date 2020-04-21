@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/edit_text_player_url"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:background="@android:drawable/edit_text"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/start_player_activity"
-        android:text="@string/play_label"
-        style="@style/ButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/edit_text_player_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:drawable/edit_text"
+            android:gravity="center"
+            android:hint="@string/edit_text_hint_link" />
+
+        <Button
+            android:id="@+id/start_player_activity"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/play_label" />
+
+    </LinearLayout>
+
+</RelativeLayout>

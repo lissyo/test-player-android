@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">test-player-android</string>
     <string name="play_label">PLAY</string>
+    <string name="edit_text_hint_link">Enter the HLS url *.m3u8</string>
 </resources>
